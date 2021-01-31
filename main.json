@@ -4,6 +4,12 @@
   "parameters": {
     "accessIP": {
       "type": "string"
+    },
+    "adminPassword": {
+      "type": "secureString"
+    },
+    "adminPublicKey": {
+      "type": "string"
     }
   },
   "functions": [],
@@ -157,7 +163,7 @@
             "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'lab-vnet'), '2019-10-01').outputs.vnetid.value]"
           },
           "adminPublicKey": {
-            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaLbW8lZpIHsmNcH9+kwvRF8qzSPkNRs/HLoEhfZ1z6vij3Apgfr3b4avCepEKsifxcRTJbVlHIjSKjzeoU3buI3f8+Sg+43z3LLEmBGW5RgJ7VcCzd8BuKKbLWR1uk76iYWW6Yx04rEjIxZOyUUoQI9vANMXnKmQWe6Bg0/rnxoXXN0Zls3uI8W9aPTtiI7E47zP6h5kwm7ly5BYxnSNbdiSGEAHiPkfDquZqwhDsHJ53aZpjUTjLUqQiQaa/jdaDv8gcCs4mIOpcA4ubE26vFvqMY4+OnFy3JEp82vgR1n1yv1TdA8zlTnSL0BpOG6ttehbsnR9ZobMn8HMfv3N9"
+            "value": "[parameters('adminPublicKey')]"
           },
           "sourceAddressPrefix": {
             "value": "[parameters('accessIP')]"
@@ -404,7 +410,7 @@
             "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'lab-vnet'), '2019-10-01').outputs.vnetid.value]"
           },
           "adminPublicKey": {
-            "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDaLbW8lZpIHsmNcH9+kwvRF8qzSPkNRs/HLoEhfZ1z6vij3Apgfr3b4avCepEKsifxcRTJbVlHIjSKjzeoU3buI3f8+Sg+43z3LLEmBGW5RgJ7VcCzd8BuKKbLWR1uk76iYWW6Yx04rEjIxZOyUUoQI9vANMXnKmQWe6Bg0/rnxoXXN0Zls3uI8W9aPTtiI7E47zP6h5kwm7ly5BYxnSNbdiSGEAHiPkfDquZqwhDsHJ53aZpjUTjLUqQiQaa/jdaDv8gcCs4mIOpcA4ubE26vFvqMY4+OnFy3JEp82vgR1n1yv1TdA8zlTnSL0BpOG6ttehbsnR9ZobMn8HMfv3N9"
+            "value": "[parameters('adminPublicKey')]"
           },
           "sourceAddressPrefix": {
             "value": "[parameters('accessIP')]"
@@ -631,6 +637,77 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
+      "name": "install-puppet-server",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "configName": {
+            "value": "install-puppet-server"
+          },
+          "vmName": {
+            "value": "puppet"
+          },
+          "fileUris": {
+            "value": "https://raw.githubusercontent.com/Blindpete/azure-puppet-lab/main/scripts/install-puppet-server.sh"
+          },
+          "commandToExecute": {
+            "value": "sh install-puppet-server.sh"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "vmName": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string",
+              "metadata": {
+                "description": "Location for all resources."
+              },
+              "defaultValue": "[resourceGroup().location]"
+            },
+            "fileUris": {
+              "type": "string"
+            },
+            "commandToExecute": {
+              "type": "string"
+            },
+            "configName": {
+              "type": "string"
+            }
+          },
+          "functions": [],
+          "resources": [
+            {
+              "type": "Microsoft.Compute/virtualMachines/extensions",
+              "apiVersion": "2020-06-01",
+              "name": "[format('{0}/{1}', parameters('vmName'), parameters('configName'))]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1.3",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                  "fileUris": [
+                    "[parameters('fileUris')]"
+                  ],
+                  "commandToExecute": "[parameters('commandToExecute')]"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-10-01",
       "name": "vm-win1",
       "properties": {
         "expressionEvaluationOptions": {
@@ -645,7 +722,7 @@
             "value": "Standard_D2s_v3"
           },
           "adminPassword": {
-            "value": "hv$oeAAM8z5K3XCFxiy!K("
+            "value": "[parameters('adminPassword')]"
           },
           "subnetName": {
             "value": "lab-subnet"

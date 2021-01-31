@@ -44,6 +44,16 @@ module vm1 './CentOS-7_9/main.bicep' = {
   }
 }
 
+module installpuppetserver './CustomScript-extensions/main.bicep' = {
+  name: 'install-puppet-server'
+  params:{
+    configName: 'install-puppet-server'
+    vmName: 'puppet'
+    fileUris: 'https://raw.githubusercontent.com/Blindpete/azure-puppet-lab/main/scripts/install-puppet-server.sh'
+    commandToExecute: 'sh install-puppet-server.sh'
+  }
+}
+
 module vm2 './WindowsServer-2019/main.bicep' = {
   name: 'vm-win1'
   params: {
