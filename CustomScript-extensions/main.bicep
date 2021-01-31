@@ -15,7 +15,7 @@ resource vmName_configuremongo 'Microsoft.Compute/virtualMachines/extensions@202
   properties: {
     publisher: 'Microsoft.Azure.Extensions'
     type: 'CustomScript'
-    typeHandlerVersion: '2.1.3'
+    typeHandlerVersion: '2.0'
     autoUpgradeMinorVersion: true
     settings: {
       fileUris: [

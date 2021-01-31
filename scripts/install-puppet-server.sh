@@ -26,5 +26,5 @@ echo 'runinterval = 1h' | sudo tee -a /etc/puppetlabs/puppet/puppet.conf
 sudo systemctl enable puppetserver
 sudo systemctl start puppetserver
 sudo systemctl status puppetserver
-sudo firewall-cmd --add-port=8140/tcp --permanent
-sudo firewall-cmd --reload
+# sudo firewall-cmd --add-port=8140/tcp --permanent
+# sudo firewall-cmd --reload
