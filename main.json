@@ -85,7 +85,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
-      "name": "Priv-lab-test",
+      "name": "lab-test",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -143,7 +143,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
-      "name": "vm-lin1",
+      "name": "lin1",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -379,6 +379,10 @@
             "adminUsername_output": {
               "type": "string",
               "value": "[parameters('adminUsername')]"
+            },
+            "vmName": {
+              "type": "string",
+              "value": "[parameters('virtualMachineName')]"
             }
           }
         }
@@ -390,7 +394,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-10-01",
-      "name": "vm-puppet",
+      "name": "puppet",
       "properties": {
         "expressionEvaluationOptions": {
           "scope": "inner"
@@ -626,6 +630,10 @@
             "adminUsername_output": {
               "type": "string",
               "value": "[parameters('adminUsername')]"
+            },
+            "vmName": {
+              "type": "string",
+              "value": "[parameters('virtualMachineName')]"
             }
           }
         }
@@ -648,7 +656,7 @@
             "value": "install-puppet-server"
           },
           "vmName": {
-            "value": "puppet"
+            "value": "[reference(extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'puppet'), '2019-10-01').outputs.vmName.value]"
           },
           "fileUris": {
             "value": "https://raw.githubusercontent.com/Blindpete/azure-puppet-lab/main/scripts/install-puppet-server.sh"
@@ -703,7 +711,10 @@
             }
           ]
         }
-      }
+      },
+      "dependsOn": [
+        "[extensionResourceId(resourceGroup().id, 'Microsoft.Resources/deployments', 'puppet')]"
+      ]
     },
     {
       "type": "Microsoft.Resources/deployments",

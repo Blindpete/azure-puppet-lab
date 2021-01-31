@@ -14,14 +14,14 @@ module vnet './VirtualNetwork/main.bicep' = {
 }
 
 module privdns './PrivateDnsZone/main.bicep' = {
-  name: 'Priv-lab-test'
+  name: 'lab-test'
   params: {
     virtualNetworkId: '${vnet.outputs.vnetid}'
   }  
 }
 
 module vm0 './CentOS-7_9/main.bicep' = {
-  name: 'vm-lin1'
+  name: 'lin1'
   params: {
     virtualMachineName: 'lin1'
     virtualMachineSize: 'Standard_D2s_v3'
@@ -33,7 +33,7 @@ module vm0 './CentOS-7_9/main.bicep' = {
 }
 
 module vm1 './CentOS-7_9/main.bicep' = {
-  name: 'vm-puppet'
+  name: 'puppet'
   params: {
     virtualMachineName: 'puppet'
     virtualMachineSize: 'Standard_D2s_v3'
@@ -48,7 +48,7 @@ module installpuppetserver './CustomScript-extensions/main.bicep' = {
   name: 'install-puppet-server'
   params:{
     configName: 'install-puppet-server'
-    vmName: 'puppet'
+    vmName: '${vm1.outputs.vmName}'
     fileUris: 'https://raw.githubusercontent.com/Blindpete/azure-puppet-lab/main/scripts/install-puppet-server.sh'
     commandToExecute: 'sh install-puppet-server.sh'
   }

@@ -146,3 +146,4 @@ resource shutdown_computevm_virtualMachineName 'Microsoft.DevTestLab/schedules@2
 }
 
 output adminUsername_output string = adminUsername
+output vmName string = virtualMachineName
