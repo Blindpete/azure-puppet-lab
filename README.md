@@ -22,7 +22,7 @@ $splat = @{
     name = 'puppet-lab'
     TemplateParameterObject = $TemplateParameterObject 
     TemplateFile = './main.json' 
-    ResourceGroupName =  'uks-puppet-lab-rg' 
+    ResourceGroupName =  $rg
 }
 New-AzResourceGroupDeployment @splat
 ```
